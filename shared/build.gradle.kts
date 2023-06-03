@@ -3,6 +3,7 @@ plugins {
     kotlin("native.cocoapods")
     id("com.android.library")
     id("org.jetbrains.compose")
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
 kotlin {
@@ -22,7 +23,8 @@ kotlin {
             baseName = "shared"
             isStatic = true
         }
-        extraSpecAttributes["resources"] = "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
+        extraSpecAttributes["resources"] =
+            "['src/commonMain/resources/**', 'src/iosMain/resources/**']"
     }
 
     sourceSets {
@@ -33,6 +35,21 @@ kotlin {
                 implementation(compose.material)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+
+                // Koin
+                api("io.insert-koin:koin-core:3.2.2")
+
+                // Ktor
+                implementation("io.ktor:ktor-client-core:2.2.1")
+                implementation("io.ktor:ktor-client-content-negotiation:2.2.1")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:2.2.1")
+                implementation("io.ktor:ktor-client-json:2.2.1")
+                implementation("io.ktor:ktor-client-logging:2.2.1")
+                implementation("io.ktor:ktor-client-serialization:2.2.1")
+
+                // Voyager
+                val voyagerVersion = "1.0.0-rc04"
+                implementation("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
             }
         }
         val androidMain by getting {
@@ -40,6 +57,9 @@ kotlin {
                 api("androidx.activity:activity-compose:1.6.1")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.9.0")
+
+                api("io.ktor:ktor-client-android:2.2.1")
+                implementation("io.coil-kt:coil-compose:2.3.0")
             }
         }
         val iosX64Main by getting
@@ -50,13 +70,16 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
+            dependencies {
+                implementation("io.ktor:ktor-client-darwin:2.2.1")
+            }
         }
     }
 }
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication.common"
+    namespace = "com.breensmbaka.common"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")

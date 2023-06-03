@@ -17,12 +17,12 @@ kotlin {
 
 android {
     compileSdk = (findProperty("android.compileSdk") as String).toInt()
-    namespace = "com.myapplication"
+    namespace = "com.breensmbaka"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
 
     defaultConfig {
-        applicationId = "com.myapplication.MyApplication"
+        applicationId = "com.breensmbaka.animefollow"
         minSdk = (findProperty("android.minSdk") as String).toInt()
         targetSdk = (findProperty("android.targetSdk") as String).toInt()
         versionCode = 1
@@ -35,4 +35,9 @@ android {
     kotlin {
         jvmToolchain(11)
     }
+}
+
+dependencies {
+    implementation("io.insert-koin:koin-core:3.2.2")
+    implementation("io.insert-koin:koin-android:3.2.3")
 }
