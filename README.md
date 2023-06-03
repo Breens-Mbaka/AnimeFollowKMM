@@ -34,3 +34,4 @@ An app that allows you to discover anime built with Kotlin Multiplatform Mobile 
 - [ ] Filter anime by categories
 - [ ] Publish to PlayStore
 - [ ] Publish to AppStore
+- [ ] Handle different states gracefully and in a scalable approach
