@@ -2,6 +2,7 @@ package presentation.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -24,6 +24,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import presentation.components.AnimeComponent
+import presentation.components.HomeScreenLoadingComponent
 import presentation.details.AnimeDetailsScreen
 
 internal class HomeScreen : Screen, KoinComponent {
@@ -35,60 +36,63 @@ internal class HomeScreen : Screen, KoinComponent {
         val homeScreenUiState = homeScreenViewModel.state.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
-            if (homeScreenUiState.value.loadingTrendingAnime) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                )
-            }
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 contentPadding = PaddingValues(14.dp),
             ) {
                 item {
-                    Text(
-                        "🔥 Trending Anime",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    if (homeScreenUiState.value.loadingTrendingAnime) {
+                        HomeScreenLoadingComponent()
+                    }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                    if (!homeScreenUiState.value.loadingTrendingAnime) {
+                        Column {
+                            Text(
+                                "🔥 Trending Anime",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
 
-                item {
-                    if (!homeScreenUiState.value.loadingTrendingAnime && homeScreenUiState.value.trendingAnime.isNotEmpty()) {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            items(homeScreenUiState.value.trendingAnime) { trendingAnime ->
-                                AnimeComponent(
-                                    dataDto = trendingAnime,
-                                    navigateToAnimeDetailsScreen = {
-                                        navigator.push(AnimeDetailsScreen(dataDto = it))
-                                    },
-                                )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                items(homeScreenUiState.value.trendingAnime) { trendingAnime ->
+                                    AnimeComponent(
+                                        dataDto = trendingAnime,
+                                        navigateToAnimeDetailsScreen = {
+                                            navigator.push(AnimeDetailsScreen(dataDto = it))
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
                 }
 
                 item {
-                    Text(
-                        "📆 Upcoming Anime",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    if (homeScreenUiState.value.loadingUpcomingAnime) {
+                        HomeScreenLoadingComponent()
+                    }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
+                    if (!homeScreenUiState.value.loadingUpcomingAnime) {
+                        Column {
+                            Text(
+                                "📆 Upcoming Anime",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
 
-                item {
-                    if (!homeScreenUiState.value.loadingUpcomingAnime && homeScreenUiState.value.upcomingAnime.isNotEmpty()) {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            items(homeScreenUiState.value.upcomingAnime) { trendingAnime ->
-                                AnimeComponent(
-                                    dataDto = trendingAnime,
-                                    navigateToAnimeDetailsScreen = {
-                                        navigator.push(AnimeDetailsScreen(dataDto = it))
-                                    },
-                                )
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                                items(homeScreenUiState.value.upcomingAnime) { trendingAnime ->
+                                    AnimeComponent(
+                                        dataDto = trendingAnime,
+                                        navigateToAnimeDetailsScreen = {
+                                            navigator.push(AnimeDetailsScreen(dataDto = it))
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
